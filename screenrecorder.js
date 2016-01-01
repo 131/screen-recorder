@@ -1,17 +1,21 @@
-var console = require('nwconsole'),
-    fs  = require('fs'),
-    net = require('net'),
-    cp  = require('child_process'),
-    tmp = require('tmp');
+var console = require('nwconsole');
+var fs      = require('fs');
+var net     = require('net');
+var path    = require('path');
+var cp      = require('child_process');
 
 
 var Class     = require('uclass');
 var Events    = require('uclass/events');
 var mask_join = require('nyks/object/mask');
+var tmppath   = require('nyks/fs/tmppath');
 var map       = require('mout/object/map');
 var values    = require('mout/object/values');
+var once      = require('nyks/function/once');
 
 var Main = new Class({
+  Implements : [Events],
+
   RC_PORT : 8088,
 
   _tmpPath  : null,
@@ -20,20 +24,25 @@ var Main = new Class({
   _recordingRect : null,
 
   _vlcCtrlStream : null,
-  _recordingProcess : null,
+
+  _recorderState : null, //['init', 'warmup', 'ready', 'recording', 'stopped']
 
   initialize : function(rect) {
-    this._tmpPath       = tmp.tmpNameSync();
+    this._tmpPath       = tmppath();
     console.log("Recording in %s", this._tmpPath);
     this._recordingRect = rect; //{x,y,w,h}
+    this._recorderState = 'init';
   },
 
   warmup : function(chain) {
+
     chain = once(chain);
 
     var self = this;
+    if(self._recorderState != 'init')
+      return chain("Invalid recorder status");
 
-    this.off('  
+    self._recorderState = 'warmup';
 
     self._onFailure = function(){
       chain("VLC Closed too early");
@@ -82,44 +91,58 @@ var Main = new Class({
       return '--' + k + '' +(v === null ? '' : '=' + v);
     } ));
 
-    var cmd = "vlc\\vlc.exe";
-    console.log(cmd);
-    var record = self._recordingProcess = cp.spawn(cmd, args);
 
-    record.on("exit", function(){
-      self._recordingProcess = null;
+    var vlc_path = path.join(__dirname, "vlc/vlc.exe");
+    var recorder = cp.spawn(vlc_path, args);
+    recorder.once('error', function(){
+      chain("Cannot find VLC in " + vlc_path);
+    });
+
+    recorder.once("exit", function(){
+      if(self._recorderState != 'stopped')
+        return self.emit(module.exports.EVENT_DONE, null, self._tmpPath);
+      self._recorderState = 'init';
       self.emit(module.exports.EVENT_DONE, null, self._tmpPath);
     });
 
     process.on('exit', function(code) {
-      record.kill();
+      recorder.kill();
     });
 
-    self._vlcCtrlStream = net.connect(self.RC_PORT, function(){
+    self._vlcCtrlStream = net.connect(self.RC_PORT, function(err){
+
       console.log("Connected to " + self.RC_PORT);
+      self._recorderState = 'ready';
       chain();
     });
 
     self._vlcCtrlStream.setNoDelay();
-
   },
 
+
   StartRecord : function(chain) {
+    if(this._recorderState != 'ready')
+      return chain("No recording process available");
+    this._recorderState = 'recording';
+
     this._send("add screen://\r\n", chain);
   },
 
   _send : function(str, chain) {
+    if(!this._vlcCtrlStream)
+      return chain("VLC stream not ready");
+
     this._vlcCtrlStream.write(str, chain);
   },
 
   StopRecord : function(chain) {
-    if (this._recordingProcess == null)
-        return;
+    if(this._recorderState != 'recording')
+      return chain("No recording process running");
+    this._recorderState = 'stopped';
 
-    try {
-      this._send("quit\r\n", chain);
-    } catch (e){ }
-  }
+    this._send("quit\r\n", chain);
+  },
+
 });
 
 
