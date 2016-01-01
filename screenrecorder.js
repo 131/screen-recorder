@@ -88,7 +88,7 @@ var Main = new Class({
 
     record.on("exit", function(){
       self._recordingProcess = null;
-      self.
+      self.emit(module.exports.EVENT_DONE, null, self._tmpPath);
     });
 
     process.on('exit', function(code) {
@@ -99,6 +99,9 @@ var Main = new Class({
       console.log("Connected to " + self.RC_PORT);
       chain();
     });
+
+    self._vlcCtrlStream.setNoDelay();
+
   },
 
   StartRecord : function(chain) {
