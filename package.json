@@ -1,0 +1,27 @@
+{
+  "name": "screen-capture-recorder",
+  "version": "0.9.0",
+  "description": "Capture a video of your desktop screen",
+  "main": "screenrecorder.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:131/screen-recorder.git"
+  },
+  "keywords": [
+    "vlc",
+    "screencap",
+    "screen",
+    "capture",
+    "screen",
+    "recorder"
+  ],
+  "author": "Francois Leurent <131.js@cloudyks.org>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/131/screen-recorder/issues"
+  },
+  "homepage": "https://github.com/131/screen-recorder"
+}
