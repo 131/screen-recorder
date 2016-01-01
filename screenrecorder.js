@@ -83,6 +83,7 @@ var Main = new Class({
       'screen-height'    : self._recordingRect.h,
       'run-time'         : self._duration,
 
+      'no-crashdump'     : null,
       'extraintf'        : 'rc',
       'rc-host'          : 'localhost:' + self.RC_PORT,
       'rc-quiet'         : null, 
@@ -92,8 +93,10 @@ var Main = new Class({
     } ));
 
 
+
     var vlc_path = path.join(__dirname, "vlc/vlc.exe");
     var recorder = cp.spawn(vlc_path, args);
+
     recorder.once('error', function(){
       chain("Cannot find VLC in " + vlc_path);
     });

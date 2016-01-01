@@ -1,0 +1,3 @@
+[submodule "vlc"]
+	path = vlc
+	url = git@github.com:131/vlc-win32.git
