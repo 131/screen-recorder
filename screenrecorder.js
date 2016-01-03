@@ -11,6 +11,7 @@ var mask_join = require('nyks/object/mask');
 var tmppath   = require('nyks/fs/tmppath');
 var map       = require('mout/object/map');
 var values    = require('mout/object/values');
+var merge     = require('mout/object/merge');
 var once      = require('nyks/function/once');
 
 var Main = new Class({
@@ -27,11 +28,12 @@ var Main = new Class({
 
   _recorderState : null, //['init', 'warmup', 'ready', 'recording', 'stopped']
 
-  initialize : function(rect) {
+  initialize : function(rect, transcodeOpt) {
     this._tmpPath       = tmppath();
     console.log("Recording in %s", this._tmpPath);
     this._recordingRect = rect; //{x,y,w,h}
     this._recorderState = 'init';
+    this._transcodeOpt  = transcodeOpt || {};
   },
 
   warmup : function(chain) {
@@ -57,7 +59,7 @@ var Main = new Class({
       'scale'  : 1,
       'width'  : self._recordingRect.w,
       'height' : self._recordingRect.h,
-    }, transcode = mask_join(transcodeOpt, '%s=%s', ',');
+    }, transcode = mask_join(merge(transcodeOpt, self._transcodeOpt), '%s=%s', ',');
 
     var outputOpt = {
       'access' : 'file',
@@ -74,7 +76,7 @@ var Main = new Class({
       'no-media-library' : null,
       'config'           : 'blank',
 
-      'intf'             : 'none',
+      'intf'             : 'dummy',
       'dummy-quiet'      : null,
       'screen-fps'       : self._grabFps,
       'screen-top'       : self._recordingRect.x,
@@ -97,13 +99,16 @@ var Main = new Class({
     var vlc_path = path.join(__dirname, "vlc/vlc.exe");
     var recorder = cp.spawn(vlc_path, args);
 
+    if(false)
+      recorder.stderr.pipe(process.stderr);
+
     recorder.once('error', function(){
       chain("Cannot find VLC in " + vlc_path);
     });
 
     recorder.once("exit", function(){
       if(self._recorderState != 'stopped')
-        return self.emit(module.exports.EVENT_DONE, null, self._tmpPath);
+        return self.emit(module.exports.EVENT_DONE, "Invalid exit status", self._tmpPath);
       self._recorderState = 'init';
       self.emit(module.exports.EVENT_DONE, null, self._tmpPath);
     });
@@ -112,14 +117,31 @@ var Main = new Class({
       recorder.kill();
     });
 
-    self._vlcCtrlStream = net.connect(self.RC_PORT, function(err){
 
-      console.log("Connected to " + self.RC_PORT);
-      self._recorderState = 'ready';
-      chain();
-    });
+    var attempt = 5;
+    (function doConnect(){
+      console.log("Trying to connect after 1s");
 
-    self._vlcCtrlStream.setNoDelay();
+      self._vlcCtrlStream = net.connect(self.RC_PORT, function(){
+        console.log("Connected to " + self.RC_PORT);
+        self._recorderState = 'ready';
+        self._vlcCtrlStream.removeAllListeners("error");
+        chain();
+      });
+
+      self._vlcCtrlStream.setNoDelay();
+
+      self._vlcCtrlStream.on("error", function(){
+        attempt --;
+        if(!attempt)
+          return chain("Could not connect");
+
+        setTimeout(doConnect, 1000);
+        console.log("Failed to connect to, reconnect");
+      });
+    })();
+
+
   },
 
 

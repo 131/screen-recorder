@@ -14,6 +14,9 @@ describe("Initial test suite", function(){
       y : 0,
       w : 640,
       h : 480,
+    }, {
+      'vcodec' : 'mp2v',
+      'vb'     : 4096,
     });
   });
 
