@@ -1,4 +1,3 @@
-var console = require('nwconsole');
 var fs      = require('fs');
 var net     = require('net');
 var path    = require('path');
