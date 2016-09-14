@@ -5,6 +5,10 @@ Screen recorder is a wrapper around VLC desktop screen recording capability with
 Capture codec is optimized to VLC real time capture best setting (ogg/theo, hight bitrate).
 Feel free to transcode/re-encode as please you afterward.
 
+# Note
+ffmpeg can also grab desktop, yet, we prefer a minimal (bundled) VLC for its ability to expose a telnet/rc interface and start capture very quickly (as the VLC process is already running in the background).
+
+
 # Installation
 ```
 npm install screen-capture-recorder
