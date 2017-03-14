@@ -4,6 +4,7 @@
   "description": "Capture a video of your desktop screen",
   "main": "screenrecorder.js",
   "scripts": {
+    "mocha": "node node_modules/mocha/bin/_mocha",
     "test": " node node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha test/"
   },
   "repository": {
@@ -25,13 +26,12 @@
   },
   "homepage": "https://github.com/131/screen-recorder",
   "dependencies": {
-    "mout": "^0.11.1",
-    "nyks": "^2.1.1",
-    "uclass": "^2.0.7"
+    "mout": "^1.0.0",
+    "nyks": "^3.16.0"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
-    "mocha": "^2.2.5",
-    "istanbul": "~0.3.18"
+    "istanbul": "~0.3.18",
+    "mocha": "^2.2.5"
   }
 }

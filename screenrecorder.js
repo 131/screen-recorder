@@ -1,41 +1,38 @@
-var fs      = require('fs');
-var net     = require('net');
-var path    = require('path');
-var cp      = require('child_process');
+"use strict";
+
+const fs      = require('fs');
+const net     = require('net');
+const path    = require('path');
+const cp      = require('child_process');
+const Events  = require('events');
+
+const mask_join = require('nyks/object/mask');
+const tmppath   = require('nyks/fs/tmppath');
+const map       = require('mout/object/map');
+const values    = require('mout/object/values');
+const merge     = require('mout/object/merge');
+const  once      = require('nyks/function/once');
 
 
-var Class     = require('uclass');
-var Events    = require('uclass/events');
-var mask_join = require('nyks/object/mask');
-var tmppath   = require('nyks/fs/tmppath');
-var map       = require('mout/object/map');
-var values    = require('mout/object/values');
-var merge     = require('mout/object/merge');
-var once      = require('nyks/function/once');
+const RC_PORT  = 8088;
 
-var Main = new Class({
-  Implements : [Events],
+class ScreenRecorder extends Events.EventEmitter {
 
-  RC_PORT : 8088,
+  constructor(rect, transcodeOpt) {
+    super();
 
-  _tmpPath  : null,
-  _duration : 180,
-  _grabFps  : 20,
-  _recordingRect : null,
+    this._duration = 180;
+    this._grabFps  = 20;
+    this._vlcCtrlStream = null;
 
-  _vlcCtrlStream : null,
-
-  _recorderState : null, //['init', 'warmup', 'ready', 'recording', 'stopped']
-
-  initialize : function(rect, transcodeOpt) {
     this._tmpPath       = tmppath();
     console.log("Recording in %s", this._tmpPath);
     this._recordingRect = rect; //{x,y,w,h}
-    this._recorderState = 'init';
+    this._recorderState = 'init';  //['init', 'warmup', 'ready', 'recording', 'stopped']
     this._transcodeOpt  = transcodeOpt || {};
-  },
+  }
 
-  warmup : function(chain) {
+  warmup(chain) {
 
     chain = once(chain);
 
@@ -86,7 +83,7 @@ var Main = new Class({
 
       'no-crashdump'     : null,
       'extraintf'        : 'rc',
-      'rc-host'          : 'localhost:' + self.RC_PORT,
+      'rc-host'          : 'localhost:' + RC_PORT,
       'rc-quiet'         : null, 
       'sout'             : '#transcode{'+transcode+'}:duplicate{dst=std{'+output+'}}',
     }, args = values( map(configOpt, function(v, k){
@@ -121,8 +118,8 @@ var Main = new Class({
     (function doConnect(){
       console.log("Trying to connect after 1s");
 
-      self._vlcCtrlStream = net.connect(self.RC_PORT, function(){
-        console.log("Connected to " + self.RC_PORT);
+      self._vlcCtrlStream = net.connect(RC_PORT, function(){
+        console.log("Connected to " + RC_PORT);
         self._recorderState = 'ready';
         self._vlcCtrlStream.removeAllListeners("error");
         chain();
@@ -141,35 +138,34 @@ var Main = new Class({
     })();
 
 
-  },
+  }
 
 
-  StartRecord : function(chain) {
+  StartRecord(chain) {
     if(this._recorderState != 'ready')
       return chain("No recording process available");
     this._recorderState = 'recording';
 
     this._send("add screen://\r\n", chain);
-  },
+  }
 
-  _send : function(str, chain) {
+  _send (str, chain) {
     if(!this._vlcCtrlStream)
       return chain("VLC stream not ready");
 
     this._vlcCtrlStream.write(str, chain);
-  },
+  }
 
-  StopRecord : function(chain) {
+  StopRecord (chain) {
     if(this._recorderState != 'recording')
       return chain("No recording process running");
     this._recorderState = 'stopped';
 
     this._send("quit\r\n", chain);
-  },
+  }
 
-});
+};
 
 
-module.exports = Main;
-
+module.exports = ScreenRecorder;
 module.exports.EVENT_DONE = 'done';
