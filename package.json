@@ -1,6 +1,6 @@
 {
   "name": "screen-capture-recorder",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Capture a video of your desktop screen",
   "main": "screenrecorder.js",
   "scripts": {
