@@ -19,6 +19,9 @@
     "screen",
     "recorder"
   ],
+  "os": [
+    "win32"
+  ],
   "author": "Francois Leurent <131.js@cloudyks.org>",
   "license": "ISC",
   "bugs": {
