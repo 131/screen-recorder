@@ -59,7 +59,7 @@ class ScreenRecorder extends Events.EventEmitter {
 
     var outputOpt = {
       'access' : 'file',
-      'mux'    : 'ogg',
+      'mux'    : 'mp4',
       'dst'    : '"' + self._tmpPath + '"',
     }, output = mask_join(outputOpt, '%s=%s', ',');
 

@@ -15,8 +15,9 @@ describe("Initial test suite", function(){
       w : 640,
       h : 480,
     }, {
-      'vcodec' : 'mp2v',
-      'vb'     : 4096,
+      'vcodec' : 'h264',
+      'venc'   : "x264{preset=ultrafast,profile=baseline,qp=1}", //"x264{qp=1}"
+      'fps'    : 20,
     });
   });
 
