@@ -8,6 +8,8 @@ var recorder = require('../');
 describe("Initial test suite", function(){
 
   var scene;
+  this.timeout(10 * 1000);
+
   it("Should should setup everything properly", function(){
     scene = new recorder({
       x : 0,
@@ -15,8 +17,6 @@ describe("Initial test suite", function(){
       w : 640,
       h : 480,
     }, {
-      'vcodec' : 'h264',
-      'venc'   : "x264{preset=ultrafast,profile=baseline,qp=1}", //"x264{qp=1}"
       'fps'    : 20,
     });
   });

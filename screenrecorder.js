@@ -48,8 +48,9 @@ class ScreenRecorder extends Events.EventEmitter {
 
 
     var transcodeOpt = {
-      'vcodec' : 'theo',
-      'vb'     : 10240,
+      'vcodec' : 'h264',
+      'venc'   : "x264{preset=ultrafast,profile=baseline,crf=0}", //"x264{qp=1}"
+
       'fps'    : self._grabFps,
       'acodec' : 'none',
       'scale'  : 1,
@@ -68,13 +69,14 @@ class ScreenRecorder extends Events.EventEmitter {
 
       'ignore-config'    : null,
       'no-plugins-cache' : null,
-      'verbose'          : 0,
+      'verbose'          : 5,
       'no-media-library' : null,
       'config'           : 'blank',
 
+
       'intf'             : 'dummy',
       'dummy-quiet'      : null,
-      'screen-fps'       : self._grabFps,
+      'screen-fps'       : transcodeOpt.fps,
       'screen-top'       : self._recordingRect.x,
       'screen-left'      : self._recordingRect.y,
       'screen-width'     : self._recordingRect.w,
@@ -95,8 +97,7 @@ class ScreenRecorder extends Events.EventEmitter {
     var vlc_path = path.join(__dirname, "vlc/vlc.exe");
     var recorder = cp.spawn(vlc_path, args);
 
-    if(false)
-      recorder.stderr.pipe(process.stderr);
+      recorder.stderr.pipe(fs.createWriteStream('vlc-capture.log'));
 
     recorder.once('error', function(){
       chain("Cannot find VLC in " + vlc_path);
