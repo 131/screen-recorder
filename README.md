@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/npm/v/screen-capture-recorder.svg)](https://www.npmjs.com/package/screen-capture-recorder)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
-![Available platform](https://img.shields.io/badge/platform-win32-blue.svg)
+![Available platform](https://img.shields.io/badge/platform-win32\/linux-blue.svg)
 
 Screen recorder is a wrapper around VLC desktop screen recording capability with a very simple API.
 
@@ -25,29 +25,18 @@ npm install screen-capture-recorder
 var recorder = require('screen-capture-recorder');
 var scene    = new recorder({ x:0, y:0, w:640, h:480 });
 
-scene.warmup(function(err){
-  //recorder is ready, now start capture
-  scene.StartRecord(function(err){
-    if(err)
-      console.log("Something got wrong");
-    //capture start _very_ quicky (60ms)
-  });
+var r       = require('./');
+const sleep = require('nyks/function/sleep');
 
-  setTimeout(function(){
+(async() => {
 
-    scene.once(recorder.EVENT_DONE, function(err, tmp_path) {
-      if(!err)
-        console.log("Everything is ok, find video in %s.ogg", tmp_path);
-      //tmp_path is a temporary file that will be deleted on process exit, keep it by renaming it
-      require('fs').renameSync(tmp_path, tmp_path + ".ogg");
-    });
+  const recorder = new r( {x : 0, y : 0 , w : 640 , h : 480} );
+  await recorder.warmup();
+  await recorder.StartRecord();
+  await sleep(5000);
+  const moviePath = await a.StopRecord();
+})();
 
-    scene.StopRecord(function(err){
-      if(err)
-        console.log("Something got wrong");
-    });
-  }, 1000 * 10);
-});
 
 ```
 

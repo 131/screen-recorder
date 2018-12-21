@@ -19,9 +19,6 @@
     "screen",
     "recorder"
   ],
-  "os": [
-    "win32"
-  ],
   "author": "Francois Leurent <131.js@cloudyks.org>",
   "license": "ISC",
   "bugs": {
@@ -30,6 +27,7 @@
   "homepage": "https://github.com/131/screen-recorder",
   "dependencies": {
     "mout": "^1.0.0",
+    "vlc-remote": "^4.2.1",
     "nyks": "^3.16.0"
   },
   "devDependencies": {
