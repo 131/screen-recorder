@@ -28,7 +28,7 @@
   "homepage": "https://github.com/131/screen-recorder",
   "dependencies": {
     "mout": "^1.0.0",
-    "vlc-remote": "^4.2.1",
+    "vlc-remote": "^4.2.2",
     "nyks": "^3.16.0"
   },
   "devDependencies": {

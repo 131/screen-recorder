@@ -22,19 +22,19 @@ npm install screen-capture-recorder
 # API
 
 ```
-var recorder = require('screen-capture-recorder');
-var scene    = new recorder({ x:0, y:0, w:640, h:480 });
+'use strict';
 
-var r       = require('./');
+const Recorder = require('./');
 const sleep = require('nyks/function/sleep');
 
 (async() => {
 
-  const recorder = new r( {x : 0, y : 0 , w : 640 , h : 480} );
-  await recorder.warmup();
-  await recorder.StartRecord();
+  const scene = new Recorder( {x : 0, y : 0 , w : 640 , h : 480} );
+  await scene.warmup();
+  await scene.StartRecord();
   await sleep(5000);
-  const moviePath = await a.StopRecord();
+  const moviePath = await scene.StopRecord();
+  console.log(moviePath);
 })();
 
 

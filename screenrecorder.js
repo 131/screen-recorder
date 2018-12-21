@@ -15,13 +15,13 @@ class ScreenRecorder extends Events.EventEmitter  {
     super();
     this._duration = 180;
     this._grabFps  = 20;
-    console.log("Recording in %s", this._tmpPath);
     this._recordingRect = rect; //{x,y,w,h}
     this._transcodeOpt  = transcodeOpt || {};
   }
 
   async warmup() {
     this._tmpPath  = tmppath();
+    console.log("Recording in %s", this._tmpPath);
     var transcodeOpt = {
       'vcodec' : 'h264',
       'venc'   : "x264{preset=ultrafast,profile=baseline,crf=0}", //"x264{qp=1}"
