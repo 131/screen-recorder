@@ -5,7 +5,8 @@
   "main": "screenrecorder.js",
   "scripts": {
     "mocha": "node node_modules/mocha/bin/_mocha",
-    "test": " node node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha test/"
+    "eslint": "eslint screenrecorder.js",
+    "test": "npm run eslint"
   },
   "repository": {
     "type": "git",
@@ -31,8 +32,6 @@
     "nyks": "^3.16.0"
   },
   "devDependencies": {
-    "expect.js": "^0.3.1",
-    "istanbul": "~0.3.18",
-    "mocha": "^2.2.5"
+    "eslint-plugin-ivs": "^2.1.0"
   }
 }
