@@ -1,12 +1,14 @@
 "use strict";
 
 const Events  = require('events');
-
 const Vlc     = require('vlc-remote/player');
 
 const mask_join = require('nyks/object/mask');
 const tmppath   = require('nyks/fs/tmppath');
 const defer     = require('nyks/promise/defer');
+const sleep     = require('nyks/function/sleep');
+
+
 
 
 class ScreenRecorder extends Events.EventEmitter  {
@@ -67,8 +69,11 @@ class ScreenRecorder extends Events.EventEmitter  {
       throw `No recording process running`;
     this._recorderState = 'stopped';
     var defered = defer();
-    this.recorder.shutdown(defered.chain);
+    this.recorder.shutdown(() => {});
+    this.recorder.once('close', defered.resolve(this._tmpPath));
+    this.recorder.once('exit', defered.resolve(this._tmpPath));
     await defered;
+    await sleep(200);
     return this._tmpPath;
   }
 

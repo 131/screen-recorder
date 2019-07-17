@@ -1,11 +1,11 @@
 {
   "name": "screen-capture-recorder",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Capture a video of your desktop screen",
-  "main": "screenrecorder.js",
+  "main": "index.js",
   "scripts": {
     "mocha": "node node_modules/mocha/bin/_mocha",
-    "eslint": "eslint screenrecorder.js",
+    "eslint": "eslint libs",
     "test": "npm run eslint"
   },
   "repository": {
