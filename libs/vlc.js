@@ -22,6 +22,9 @@ class ScreenRecorder extends Events.EventEmitter  {
   }
 
   async warmup() {
+    if(this.recorder)
+      throw `Recorder already started, please create new instance`;
+
     this._tmpPath  = tmppath();
     console.log("Recording in %s", this._tmpPath);
     var transcodeOpt = {

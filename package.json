@@ -4,7 +4,7 @@
   "description": "Capture a video of your desktop screen",
   "main": "index.js",
   "scripts": {
-    "mocha": "node node_modules/mocha/bin/_mocha",
+    "mocha": "node node_modules/mocha/bin/_mocha -b",
     "eslint": "eslint libs",
     "test": "npm run eslint"
   },
@@ -28,10 +28,12 @@
   "homepage": "https://github.com/131/screen-recorder",
   "dependencies": {
     "mout": "^1.0.0",
-    "vlc-remote": "^4.2.2",
-    "nyks": "^3.16.0"
+    "nyks": "^3.16.0",
+    "vlc-remote": "^4.2.2"
   },
   "devDependencies": {
-    "eslint-plugin-ivs": "^2.1.0"
+    "eslint-plugin-ivs": "^2.1.0",
+    "expect.js": "^0.3.1",
+    "mocha": "^3.1.2"
   }
 }

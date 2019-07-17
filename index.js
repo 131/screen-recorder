@@ -2,6 +2,6 @@
 
 
 module.exports = {
-  vlc    : require('./lib/vlc'),
+  vlc    : require('./libs/vlc'),
   ffmpeg : require('./libs/ffmpeg')
 };

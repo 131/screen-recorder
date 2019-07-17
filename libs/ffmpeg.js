@@ -12,6 +12,8 @@ class FFMPEGRecorder {
   }
 
   async warmup() {
+    if(this.recorder)
+      throw `Recorder already started, please create new instance`;
 
     const option = {
       threads    : 'auto',
