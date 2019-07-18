@@ -53,8 +53,8 @@ class FFMPEGRecorder {
     console.log('stop recording ');
     this._recorderState = 'stopped';
     var defered = defer();
-    this.recorder.once('close', defered.resolve(this._tmpPath));
-    this.recorder.once('exit', defered.resolve(this._tmpPath));
+    this.recorder.once('close', defered.resolve.bind(null, this._tmpPath));
+    this.recorder.once('exit', defered.resolve.bind(null, this._tmpPath));
     this.recorder.kill('SIGTERM');
     return defered;
   }
