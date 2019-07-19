@@ -24,7 +24,8 @@ class FFMPEGRecorder {
       i          : ':0',
       'c:v'      : 'h264_nvenc',
       preset     : 'losslesshp',
-      y          : null
+      y          : null,
+      "ivs-rc"   : null
     };
 
     var cmd_opt = [];
